@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>PHP Styleswitcher: Vresion 2 Documentation</title>
+  <style type="text/css">
+  body {font-family:"Georgia", sans-serif;}
+  #documentation {max-width:900px;}
+  dl {border:1px solid #ccc;background:#eee;padding:1em;}
+  </style>
+</head>
+<body>
+  <div id="documentation">
+    <h1>PHP Styleswitcher: Version 2 Documentation</h1>
+
+    <h2><a name="docs"></a>Styleswitcher Documentation</h2>
+
+    <ul>
+    <li> <a href="#intro">Introduction</a></li>
+    <li> <a href="#code">Code Overview</a></li>
+    <li> <a href="#class_styleswitcher">Styleswitcher Class</a>
+      <ul>
+        <li> <a href="#styleswitcher_fields">Fields</a></li>
+        <li> <a href="#styleswitcher_constructor">Constructor</a></li>
+        <li> <a href="#styleswitcher_methods">Methods</a></li>
+      </ul>
+    </li>
+    <li> <a href="#class_styleset">StyleSet Class</a></li>
+    <li> <a href="#class_style">Style Class</a></li>
+    </ul>
+
+    <h3><a name="intro"></a>Introduction</h3>
+
+    <p>This document is intended to provide more in-depth coverage of the code that powers the Styleswitcher. It is
+    assumed that the reader has some basic knowledge of PHP and of Object Oriented Programming.</p>
+
+    <p>For general information on how to install and set up the styleswitcher, refer to either the <a href="tutorial.php">Styleswitcher Tutorial</a> or
+    the <a href="upgrade.php">Upgrade Guide</a>.</p>
+
+    <h3><a name="overview"></a>Code Overview</h3>
+
+    <p>The code is broken down into three sections: the <a href="#class_styleswitcher"><code>Styleswitcher</code></a> class, the <a href="#class_styleset"><code>StyleSet</code></a> class,
+    and the <a href="#class_style"><code>Style</code></a> class. The <a href="#class_styleswitcher"><code>Styleswitcher</code></a> class uses both of the other smaller classes;
+    the <a href="#class_styleset"><code>StyleSet</code></a> class uses the <a href="#class_style"><code>Style</code></a> class.</p>
+
+    <p>The primary programming and user interaction is with the <a href="#class_styleswitcher"><code>Styleswitcher</code></a> class which implements most
+    of the script's logic. The other two classes are supporting classes.</p>
+
+    <h3><a name="class_styleswitcher"></a>Styleswitcher Class</h3>
+
+    <p>This is the primary class for the style switcher. It uses the two classes <a href="#class_styleset"><code>StyleSet</code></a> and <a href="#class_style"><code>Style</code></a>.
+
+    <h4><a name="styleswitcher_fields"></a>Fields</h4>
+
+    <dl>
+    <dt><var>acceptQuery</var></dt>
+    <dd><strong>Boolean</strong> &#150; Flag determining whether "query" (GET) input is accepted. 
+     To accept info from some forms and from HTML links, this must be true. This is <code>true</code> 
+     by default.</dd>
+    <dt><var>acceptPost</var></dt>
+    <dd><strong>Boolean</strong> &#150; Flag determining whether POST input is accepted. This must be
+     turned on to accept information from forms using the POST method. This is <code>true</code> by
+     default.</dd>
+    <dt><var>bounceToReferer</var></dt>
+    <dd><strong>Boolean</strong> &#150; Flag determining whether or not the script should redirect the
+     user to the refering address (the script will try to find a referer in the POST/GET information or
+     in the HTTP headers). <code>true</code> by default.</dd>
+    <dt><var>cookieDomain</var></dt>
+    <dd><strong>String</strong> &#150; The domain name for the cookies set by the styleswitcher.</dd>
+    <dt><var>cookieName</var></dt>
+    <dd><strong>String</strong> &#150; The name for the cookie where the information will be stored. 
+     This is by default the same as version 1, but may be changed to avoid conflict.</dd>
+    <dt><var>home</var></dt>
+    <dd><strong>String</strong> &#150; This string is a link back to the page that should be used when
+     not using <var>bounceToReferer</var> or when the refer is not present.</dd>
+    <dt><var>includeType</var></dt>
+    <dd><strong>Boolean</strong> &#150; Flag determining whether or not 'type="text/css"' is set.
+      By default this is set to true, meaning 'type="text/css"' will be added to each link.
+    <dt><var>sets</var></dt>
+    <dd><strong>Array</strong> &#150; This field is mostly used for internal use, but contains a list of
+     all the StyleSets that are created.</dd>
+    <dt><var>styleSet</var></dt>
+    <dd><strong>Array</strong> &#150; This field contains all of the Styles that are created.</dd>
+    <dt><var>styleVariable</var></dt>
+    <dd><strong>String</strong> &#150; This field contains the name, checked by default for style information.</dd>
+    </dl>
+
+    <h4><a name="styleswitcher_constructor"></a>Constructor</h4>
+
+    <p class="method"><code>new <strong>Styleswitcher</strong>([<var>home</var>, <var>domain</var>])</code></p>
+
+    <dl>
+    <dt><var>home</var></dt>
+    <dd><strong>String</strong> &#150; An optional argument for setting where the home page is (see the <var>home</var> field above).</dd>
+    <dt><var>domain</var></dt>
+    <dd><strong>String</strong> &#150; An optional argument for setting the cookie domain.</dd>
+    </dl>
+
+    <h4><a name="styleswitcher_methods">Methods</h4>
+
+    <p class="method"><a name="method_addStyle"></a><code><strong>addStyle</strong>(<var>style</var> [, <var>file</var>, <var>media</var>, <var>title</var>, <var>static</var>])</code></p>
+
+    <p>This method adds a style to the Styleswitcher object.</p>
+
+    <dl>
+    <dt><var>style</var></dt>
+    <dd><strong>String</strong> &#150; The name for the style (not to be confused with the style <var>title</var>).</dd>
+    <dt><var>file</var></dt>
+    <dd><strong>String</strong> &#150; The link for the stylesheet.</dd>
+    <dt><var>media</var></dt>
+    <dd><strong>String</strong> &#150; The media type for the stylesheet.</dd>
+    <dt><var>title</var></dt>
+    <dd><strong>String</strong> &#150; The title attribute for the stylesheet link.</dd>
+    <dt><var>static</var></dt>
+    <dd><strong>Boolean</strong> &#150; Flag determining if this style is always present or only when specified.
+     <code>false</code> by default.</dd>
+    </dl>
+
+    <p><em>Example</em></p>
+
+    <pre><code>$ss = new <a href="#styleswitcher_constructor">Styleswitcher</a>();
+    $ss->addStyle("basic", "css/basic.css");</code></pre>
+
+    <p class="method"><a name="method_addStyleToSet"></a><code><strong>addStyleToSet</strong>(<var>setName</var>, <var>style</var> [, <var>default</var>])</code></p>
+
+    <p>This method adds a style to a set of styles. Both the set and the style must be created before this method can
+    be used. If a style is marked as the default style, it will be used when no other style has been selected for this
+    set (or if, in the bizarre circumstance, more than one style is selected for a set, including the default).</p>
+
+    <dl>
+    <dt><var>setName</var></dt>
+    <dd><strong>String</strong> &#150; The name of the set the style should be added to.</dd>
+    <dt><var>style</var></dt>
+    <dd><strong>String</strong> &#150; The name for the style (not to be confused with the style <var>title</var>).</dd>
+    <dt><var>default</var></dt>
+    <dd><strong>Boolean</strong> &#150; An optional flag specifying whether or not this style is the default style for the set. <code>false</code> by default.</dd>
+    </dl>
+
+    <p><em>Example</em></p>
+
+    <pre><code>$ss = new <a href="#styleswitcher_constructor">Styleswitcher</a>();
+    $ss-><a href="#method_addStyle">addStyle</a>("large", "css/large-text.css");
+    $ss-><a href="#method_addStyle">addStyle</a>("small", "css/small-text.css");
+    $ss-><a href="#method_createSet">createSet</a>("fonts");
+    $ss->addStyleToSet("fonts", "large");
+    $ss->addStyleToSet("fonts", "small");</code></pre>
+
+    <p class="method"><a name="method_createSet"></a><code><strong>createSet</strong>(<var>setName</var> [, <var>setItems</var>])</code></p>
+
+    <p>This method creates a new style set. Style sets are used to handle multiple styles that are mutually
+     exclusive (i.e., only one style from a set may be present at a time.)</p>
+
+    <dl>
+     <dt><var>setName</var></dt>
+     <dd><strong>String</strong> &#150; The name of this set.</dd>
+     <dt><var>setItems</var></dt>
+     <dd><strong>Array</strong> &#150; An optional argument specifying an array of styles to be added to the set.</dd>
+    </dl>
+
+    <p><em>Example</em></p>
+
+    <pre><code>$ss = new <a href="#styleswitcher_constructor">Styleswitcher</a>();
+    $ss-><a href="#method_addStyle">addStyle</a>("large", "css/large-text.css");
+    $ss-><a href="#method_addStyle">addStyle</a>("small", "css/small-text.css");
+    $ss->createSet("fonts");
+    $ss-><a href="#method_addStyleToSet">addStyleToSet</a>("fonts", "large");
+    $ss-><a href="#method_addStyleToSet">addStyleToSet</a>("fonts", "small");</code></pre>
+
+    <p class="method"><a name="method_printAlternateStyles"></a><code><strong>printAlternateStyles</strong>([<var>printAll</var>])</code></p>
+
+    <p>This method prints out the alternate stylesheets for a page. If the <var>printAll</var> argument is <code>true</code>,
+     then it will print out alternate links for all stylesheets, including those that are printed for immediate use and
+     those that are static.</p>
+
+    <dl>
+     <dt><var>printAll</var></dt>
+     <dd><strong>Boolean</strong> &#150; An optional flag to print out all stylesheets as alternate links or just
+      those that are not going to be used by the page. <code>true</code> by default.</dd>
+    </dl>
+
+    <p><em>See Also:</em> <a href="#method_printStyles">printStyles()</a></p>
+
+    <p class="method"><a name="method_printSetInputChecked"></a><code><strong>printSetInputChecked</strong>(<var>set</var>, <var>input</var>)</code></p>
+
+    <p>This method is useful when using form-based style changers (for instance, checkboxes or radio buttons) because
+     it will print out the proper <code>checked="checked"</code> for the element depending on whether or not
+     it is set in the user's cookies or is the default for a style set (in the case that no styles from that set are
+     located in the user's cookies).</p>
+
+    <dl>
+     <dt><var>set</var></dt>
+     <dd><strong>String</strong> &#150; The set name for this element. For example, if this element is associated with
+      the "fonts" set, that is the name you would pass in.</dd>
+     <dt><var>input</var></dt>
+     <dd><strong>String</strong> &#150; The style name associated with this form element.</dd>
+    </dl>
+
+    <p><em>Example</em></p>
+
+    <pre><code>&lt;form action="php/switcher.php" method="post"&gt;
+    &lt;input type="radio" name="fontSet" id="fontSet1"\
+    &lt;?php $ss-&gt;printSetInputChecked("fonts", "large"); ?&gt; /&gt; 
+    &lt;label for="fontSet1"&gt;Large Text&lt;label&gt;
+    &lt;input type="radio" name="fontSet" id="fontSet2" 
+    &lt;?php $ss-&gt;printSetInputChecked("fonts", "small"); ?&gt; /&gt; 
+    &lt;label for="fontSet2"&gt;Small Text&lt;label&gt;</code></pre>
+
+    <p class="method"><a name="method_printSetStyles"></a><code><strong>printSetStyles</strong>()</code></p>
+
+    <p>This method prints out the correct styles for each available set. The "correct" style is either: the default
+     style in the absence of all other styles, the default in the case that default is present along with other
+     styles, the first style within the set (in the case that there are more than one from each set), or the 
+     one style choosen for each set.</p>
+
+    <p><em>See Also:</em> <a href="#method_printStyles">printStyles()</a></p>
+
+    <p class="method"><a name="method_printStyles"></a><code><strong>printStyles</strong>([<var>printAlt</var>])</code></p>
+
+    <p>This is a method which encapsulates all the other print style methods. Typically, this is the only one
+     that needs to be called.</p>
+
+    <dl>
+     <dt><var>printAlt</var></dt>
+     <dd><strong>Boolean</strong> &#150; An optional flag for whether or not alternate style sheets should be printed.</dd>
+    </dl>
+
+    <p class="method"><a name="method_printStaticStyles"></a><code><strong>printStaticStyles</strong>()</code></p>
+
+    <p>This method is used to print out all styles marked as being "static" (and not within a set &#150; static
+     styles should not be within sets.</p>
+
+    <p><em>See Also:</em> <a href="#method_printStyles">printStyles()</a></p>
+
+    <p class="method"><a name="method_printUserStyles"></a><code><strong>printUserStyles</strong>()</code></p>
+
+    <p>This prints styles selected by the user that are not within sets (i.e., those styles that are not
+     mutually exclusive.</p>
+
+    <p><em>See Also:</em> <a href="#method_printStyles">printStyles()</a></p>
+
+    <p class="method"><a name="method_setHome"></a><code><strong>setHome</strong>(<var>home</var>)</code></p>
+
+    <p>A simple method for setting the Styleswitcher's home.</p>
+
+    <dl>
+     <dt><var>home</var></dt>
+     <dd>The styleswitcher's home. This is used when redirection to the refer is not used or cannot be completed.</dd>
+    </dl>
+
+    <p class="method"><a name="method_start"></a><code><strong>start</strong>()</code></p>
+
+    <p>This method is used when accepting information about setting cookies for remembering a user's style changes.</p>
+
+    <p class="method"><a name="method_styleCookieSet"></a><code><strong>styleCookieSet</strong>()</code></p>
+
+    <p>This method is handy for checking if the style cookie has been set. It returns <code>true</code> if the cookie
+     is present and <code>false</code> if not.</p>
+
+    <p><em>Example</em></p>
+
+    <pre><code>if($ss->styleCookieSet){
+      print "You have chosen a different style.";
+    }</code></pre>
+
+    <h3><a name="class_styleset"></a>StyleSet Class</h3>
+
+    <p>This is the first of two supporting classes for the <a href="#class_styleswitcher"><code>Styleswitcher</code></a> class. This class
+    implements a set (an array) of <a href="#class_Style"><code>Style</code></a>s. You do not need to call any of the
+    methods from this class to use the styleswitcher.</p>
+
+    <h4><a name="styleset_fields"></a>Fields</h4>
+
+    <dl>
+    <dt><var>styles</var></dt>
+    <dd>An array of all the styles within this set.</dd>
+    <dt><var>default</var></dt>
+    <dd>The name of the default style for this set.</dd>
+    <dt><var>set</var></dt>
+    <dd>The name of the style that is to be printed for this set (mostly used in the <a href="#class_styleswitcher"><code>Styleswitcher</code></a>
+     <a href="#method_printStyles"><code>printStyles()</code></a> method.</dd>
+    </dl>
+
+    <h4>Constructor</h4>
+
+    <p class="method"><a name="constructor_styleset"></a><code>new <strong>StyleSet</strong>([<var>default</var>])</code></p>
+
+    <dl>
+    <dt><var>default</var></dt>
+    <dd><strong>String</strong> &#150; An optional string that names the default style for this set.</dd>
+    </dl>
+
+    <h4>Methods</h4>
+
+    <p class="method"><a name="method_addStyle2"></a><code><strong>addStyle</strong>(<var>style</var> [, <var>file</var>, <var>media</var>, <var>title</var>, <var>static</var>])</code></p>
+
+    <p>This method adds a style to this set. Typically you may use the <a href="#method_addStyleToSet"><code>addStyleToSet()</code></a> method to add a style to the styleswitcher.</p>
+
+    <dl>
+    <dt><var>style</var></dt>
+    <dd><strong>String</strong> &#150; The name of the style to be added.</dd>
+    <dt><var>file</var></dt>
+    <dd><strong>String</strong> &#150; An optional argument. The file for this style.</dd>
+    <dt><var>media</var></dt>
+    <dd><strong>String</strong> &#150; An optional argument. The media attribute for this style link.</dd>
+    <dt><var>title</var></dt>
+    <dd><strong>String</strong> &#150; An optional argument. The title attribute for this style link.</dd>
+    <dt><var>static</var></dt>
+    <dd><strong>Boolean</strong> &#150; An optional argument that deals with whether this style is static or not.</dd>
+    </dl>
+
+    <p class="method"><a name="method_exists"></a><code><strong>exists</strong>(<var>style</var>)</code></p>
+
+    <p>This method checks whether a style exists within a style set.</p>
+
+    <dl>
+    <dt><var>style</var></dt>
+    <dd>The name of the style.</dd>
+    </dl>
+
+    <p class="method"><a name="method_getStyle"></a><code><strong>getStyle</strong>(<var>style</var>)</code></p>
+
+    <p>This method returns the <code><a href="#class_style">Style</a></code> object for the specified style.</p>
+
+    <dl>
+    <dt><var>style</var></dt>
+    <dd>The name of the style.</dd>
+    </dl>
+
+    <h3>Style Class</h3>
+
+    <p>This class models a stylesheet. It is used to hold information regarding stylesheets for the styleswitcher.</p>
+
+    <h4>Fields</h4>
+
+    <dl>
+    <dt><var>name</var></dt>
+    <dd>The name of the stylesheet (for use with the styleswitcher).</dd>
+    <dt><var>file</var></dt>
+    <dd>The file name of the stylesheet.</dd>
+    <dt><var>media</var></dt>
+    <dd>The media attribute for the stylesheet.</dd>
+    <dt><var>static</var></dt>
+    <dd>A boolean flag determing whether this style is static or not.</dd>
+    <dt><var>title</var></dt>
+    <dd>The title attribute of the stylesheet.</dd>
+    </dl>
+
+    <h4>Constructor</h4>
+
+    <p><code><a name="constructor_style"></a>new <strong>Style</strong>(<var>name</var> [, <var>file</var>, <var>media</var>, <var>title</var>, <var>static</var>])</code></p>
+
+    <p>The arguments to this constructor are the same as the fields list above.</p>
+  </div>
+</body>
+</html>
