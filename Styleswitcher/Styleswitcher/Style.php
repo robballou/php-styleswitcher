@@ -5,6 +5,12 @@
  * @package Styleswitcher
  */
 class Style {
+  
+  /**
+   * @var bool
+   */
+  public $active = false;
+  
   /**
    * Name for this style
    * 
@@ -12,7 +18,7 @@ class Style {
    * 
    * @var string
    */
-  var $name = '';
+  public $name = '';
   
   /**
    * The URL for the file
@@ -21,13 +27,13 @@ class Style {
    * 
    * @var string
    */
-  var $file = '';
+  public $file = '';
   
   /**
    * The media type for the style
    * @var string
    */
-  var $media = '';
+  public $media = '';
   
   /**
    * Whether or not this is a static style
@@ -36,25 +42,29 @@ class Style {
    * 
    * @var bool
    */
-  var $static = false;
+  public $static = false;
   
   /**
    * The title attribute for this style
    * @var string
    */
-  var $title = '';
+  public $title = '';
 
   /**
    * Create a new style
    * 
    * @see Styleswitcher::addStyle()
    */
-  public function __construct__($name, $file="", $media="", $title="", $static=false){
+  public function __construct($name, $file="", $media="", $title="", $static=false){
     $this->name = $name;
     $this->file = $file;
     $this->media = $media;
     $this->static = $static;
     $this->title  = $title;
+  }
+  
+  public function __toString(){
+    return $this->name;
   }
 }
 ?>

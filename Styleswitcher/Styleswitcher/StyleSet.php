@@ -3,30 +3,42 @@
   StyleSet class
 ---------------------------------------------------------*/
 class StyleSet {
-  /*---------------------------------------------------
-    Fields
-  -----------------------------------------------------*/
-  var $styles; // The style array
-  var $default; // The default style choice for this set
-  var $set; // Holder for the style name to be used
-  var $name;
+  /**
+   * The style array
+   * @var mixed
+   */
+  public $styles;
   
-  /*---------------------------------------------------
-    Constructor
-  -----------------------------------------------------*/
-  function StyleSet($default="", $name=""){
+  /**
+   * The default style choice for this set
+   * @var mixed
+   */
+  public $default;
+  
+  /**
+   * Holder for the style name to be used
+   * @var mixed
+   */
+  public $set;
+  
+  /**
+   * @var string
+   */
+  public $name;
+  
+  /**
+   * 
+   */
+  function __construct($default="", $name=""){
     $this->default = $default;
     $this->styles = array();
     $this->set = "";
     $this->name = $name;
   }
   
-  /*---------------------------------------------------
-    Public Methods
-  -----------------------------------------------------*/
-  /*
-    addStyle()
-  */
+  /**
+   * 
+   */
   function addStyle($style, $file="", $media="", $title="", $static=false){
     if(!is_object($style)){
       $style = new Style($style, $file, $media, $title, $static);
@@ -63,6 +75,15 @@ class StyleSet {
       if(strval($s->name) == $style){ return true; }
     }
     return false;
+  }
+  
+  public function getCurrentStyle(){
+    $s = $this->set;
+    if($s == ''){ 
+      $s = $this->default; 
+      $this->set = $s;
+    }
+    return $s;
   }
   
   /*

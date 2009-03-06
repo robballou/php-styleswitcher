@@ -1,0 +1,4 @@
+body {font-family:Georgia,serif;max-width:900px;}
+a:link {color:blue;}
+a:visited {color:darkblue;}
+a:focus,a:active {color:orange;}

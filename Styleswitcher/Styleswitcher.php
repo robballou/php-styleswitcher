@@ -1,5 +1,21 @@
 <?php
 /**
+ *
+ * PHP Styleswitcher
+ * Version 2.03 (PHP5)
+ *
+ * This code implements a simple PHP stylesheet switcher.
+ * Unlike version 1, this code is more roboust and much
+ * cleaner. Please refer to the enclosed documentation or
+ * to the documentation on the web site about how to use
+ * this code.
+ *
+ * @author Rob Ballou (rob.ballou@gmail.com)
+ * Last Updated: 2009-03-03
+ *
+ * Styleswitcher web site:
+ * http://robballou.com/switcher/
+ * 
  * @package Styleswitcher
  */
 require_once('Styleswitcher/Style.php');

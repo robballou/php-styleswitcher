@@ -1,0 +1,4 @@
+body {background:darkblue;color:#fff;}
+a:link {color:yellow;}
+a:visited {color:yellow;}
+a:focus,a:active {color:orange;}
