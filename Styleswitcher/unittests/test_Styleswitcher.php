@@ -1,12 +1,22 @@
 <?php
+/**
+ * @package Styleswitcher
+ */
+
+// if simpletest is not part of your PHP include path, add an ENV variable to point there!
 if(isset($_ENV['SIMPLETEST_PATH'])){
   ini_set('include_path', $_ENV['SIMPLETEST_PATH'] . PATH_SEPARATOR . ini_get('include_path'));
 }
 
+// includes
 require_once("simpletest/unit_tester.php");
 require_once("simpletest/reporter.php");
-require_once('Styleswitcher.php');
+require_once('../Styleswitcher.php');
 
+/**
+ * Unittest for the Styleswitcher class
+ * @package Styleswitcher
+ */
 class TestStyleswitcher extends UnitTestCase {
   public function setup(){
     $this->ss = new Styleswitcher();
@@ -56,6 +66,16 @@ class TestStyleswitcher extends UnitTestCase {
     $this->assertEqual($this->ss->getStyleCookie(array('high')), 'large+high');
     $this->assertEqual($this->ss->sets['fonts']->set, 'large');
     $this->assertEqual($this->ss->sets['style']->set, 'high');
+  }
+  
+  public function testInSet(){
+    $this->assertTrue($this->ss->inSet('large'), 'Large should be in a set');
+    $this->assertFalse($this->ss->inSet('basic'), 'Basic should not be in a set');
+  }
+  
+  public function testGetSetName(){
+    $this->assertFalse($this->ss->getSetName('basic'));
+    $this->assertEqual($this->ss->getSetName('large'), 'fonts');
   }
 }
 

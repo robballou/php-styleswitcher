@@ -63,6 +63,10 @@ class Style {
     $this->title  = $title;
   }
   
+  /**
+   * Convert the style to a human-friendly string
+   * @return string
+   */
   public function __toString(){
     return $this->name;
   }

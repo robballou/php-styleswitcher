@@ -1,7 +1,9 @@
 <?php
-/*-------------------------------------------------------
-  StyleSet class
----------------------------------------------------------*/
+/**
+ * Class for making sets of styles
+ * 
+ * @package Styleswitcher
+ */
 class StyleSet {
   /**
    * The style array
@@ -27,7 +29,7 @@ class StyleSet {
   public $name;
   
   /**
-   * 
+   * Create a new style set
    */
   function __construct($default="", $name=""){
     $this->default = $default;
@@ -37,7 +39,13 @@ class StyleSet {
   }
   
   /**
-   * 
+   * Add a new style to this set
+   * @param mixed $style
+   * @param string $file
+   * @param string $media
+   * @param string $title
+   * @param bool $static
+   * @return true
    */
   function addStyle($style, $file="", $media="", $title="", $static=false){
     if(!is_object($style)){
@@ -63,11 +71,13 @@ class StyleSet {
     return true;
   }
   
-  /*
-    exists()
-  */
+  /**
+   * Tests if the requested style exists in the set
+   * @param mixed $style 
+   * @return bool
+   */
   function exists($style){
-    if(is_object($style) && strtolower(get_class($style)) == "style"){
+    if(is_object($style) && $style instanceof Style){
       $style = strval($style->name);
     }
     else if(is_object($style)){ return false; }
@@ -77,6 +87,11 @@ class StyleSet {
     return false;
   }
   
+  /**
+   * Get the currently assigned style for the set
+   * 
+   * If no style has been set, then we will try to use the default
+   */
   public function getCurrentStyle(){
     $s = $this->set;
     if($s == ''){ 
@@ -86,9 +101,14 @@ class StyleSet {
     return $s;
   }
   
-  /*
-    getStyle()
-  */
+  /**
+   * Find a style in the set
+   * 
+   * Returns false if the style is not found
+   * 
+   * @param string $style
+   * @return mixed 
+   */
   function getStyle($style){
     foreach($this->styles as $s){
       if($s->name == $style){ return $s; }
@@ -96,6 +116,10 @@ class StyleSet {
     return false;
   }
 
+  /**
+   * Get a list of style names in this set
+   * @return string
+   */
   function getStyleNames(){
     reset($this->styles);
     $names = "";

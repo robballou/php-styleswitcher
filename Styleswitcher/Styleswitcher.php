@@ -1,8 +1,6 @@
 <?php
 /**
- *
  * PHP Styleswitcher
- * Version 2.03 (PHP5)
  *
  * This code implements a simple PHP stylesheet switcher.
  * Unlike version 1, this code is more roboust and much
@@ -10,13 +8,14 @@
  * to the documentation on the web site about how to use
  * this code.
  *
- * @author Rob Ballou (rob.ballou@gmail.com)
  * Last Updated: 2009-03-03
  *
  * Styleswitcher web site:
  * http://robballou.com/switcher/
- * 
+ *
+ * @author Rob Ballou (rob.ballou@gmail.com) 
  * @package Styleswitcher
+ * @version 2.03
  */
 require_once('Styleswitcher/Style.php');
 require_once('Styleswitcher/StyleSet.php');
